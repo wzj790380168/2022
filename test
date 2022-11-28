@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="UTF-8">
+	<title>大众心理认知度调研</title>
+	<style>
+  .container {
+  margin: 1px auto;
+  width: 1000px;
+  height: 500px;
+  
+  }
+  polyline {
+  fill: none;
+  stroke: #000000;
+  stroke-width: 2px;
+  stroke-dasharray: 4px;
+  }
+	</style>
+	<style type="text/css">
+		p{
+			font-size:15px;
+			font-weight:900;
+		}
+	</style>
+	</head>
+	<body>
+		
+		<h1 align="center">大众心理认知度调研</h1>
+		<hr width="100%"  size="10" color="gray"></hr>
+		<h3 align="center">大众获取心理知识途径</h3>
+		<div id="hist"></div>
+		<hr width="100%"></hr>
+		<h3 align="center">大众寻求心理帮助途径</h3>
+		<div class="container">
+			<svg width="100%" height="100%"></svg>
+		</div>
+		<div id="sign"></id>
+		<script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
+		<script>
+			var w = window.innerWidth
+			|| document.documentElement.clientWidth
+			|| document.body.clientWidth;
+
+			var h = window.innerHeight
+			|| document.documentElement.clientHeight
+			|| document.body.clientHeight; 
+			//获得浏览器窗口的高度和宽度：（不包括工具栏和滚动条）
+			w=w*0.98;
+			h=h*0.98;
+			
+			var width = 1000, height = 500;
+			//var w=1000,h=500
+  
+			var svg = d3.select("#hist")
+        				.append("svg")
+        				.attr("width",w)
+        				.attr("height",h*1.5/3);
+
+        	var index = [0,1,2,3,4,5];
+        	var color = [ '#589BAD'];
+        	var ordinal = d3.scale.ordinal()
+        					.domain(index)
+        					.range(color);
+        					
+			var dataset1=[96.45,27.79,46.34,26.78,23.62,22.96,5.79];
+            var text1=["网络平台（微信公众号等）","心理类书籍&期刊杂志","心理类课程&讲座","音视频节目","网络社交圈分享","朋友聊天介绍等","其他"]
+            var dataset3= [{name:"网络平台（微信公众号等）",value:96.45},
+			               {name:"心理类书籍&期刊杂志",value:27.79},
+						   {name:"心理类课程&讲座",value:46.34},
+						   {name:"音视频节目",value:26.78},
+						   {name:"网络社交圈分享",value:23.62},
+						   {name:"朋友聊天介绍等",value:22.96},
+						   {name:"其他",value:5.79}
+							];
+							
+        	var min = d3.min(dataset1);
+        	var max = d3.max(dataset1);
+        	var linear = d3.scale.linear()
+        				   .domain([min,max])
+        				   .range([46.32,771.6]);
+        	var rectHeight = 40;
+        	svg.selectAll("rect")
+        	   .data(dataset1)
+        	   .enter()
+        	   .append("rect")
+        	   .attr("x",400)
+        	   .attr("y",function(d,i){
+        	   	return i*rectHeight;
+        	   })
+        	   .attr("width",function(d){
+        	   	return linear(d);
+        	   })
+        	   .attr("height",rectHeight-10)
+        	   .attr("fill",function(d,i){
+        	   	return ordinal(i);
+        	   })
+			   .on("mouseover",function(d,i){
+				     d3.select(this)
+					   .attr('opacity', 0.7);
+					 svg.append("text")
+					    .attr("id","value")
+				         .attr("x",w*4/5)
+				         .attr("y",h/3)
+				         .attr("text-anchor","middle")
+				         .attr("font-size",36)
+			             .text(d+"%");
+					   })
+			   .on("mouseout",function(d){
+				     d3.select(this)
+					   .attr('opacity', 1)
+					d3.select("#value")
+					  .remove()
+					 })
+			
+			var texts1 = svg.selectAll('text')
+                    .data(text1)
+                    .enter()
+                    .append('text')
+                    .attr('fill', "black")
+                    .text(function(d,i) {
+    				   return text1[i]; })
+					
+                    .attr("x",width/6)
+        	        .attr("y",function(d,i){
+        	   	return i*rectHeight+20;
+        	    })
+			
+
+  
+			// 创建一个分组用来组合要画的图表元素
+			var main = d3.select('.container svg').append('g')
+                                        .classed('main', true)
+                                        .attr('transform', "translate(" + width/2 + ',' + height/2 + ')');
+  
+			// 数据193.03
+			var dataset = [
+							{name:"其他",value:4.305},
+						    {name:"上网查相关资料",value:30.658},
+   							{name:"阅读心理专业书籍",value:25.089},
+   							{name:"找专业心理咨询师",value:14.583},
+   							{name:"去医院就诊",value:11.982},
+    						{name:"不需要专业资源",value:7.962},
+	 						{name:"拨打咨询热线",value:5.421}
+   
+							];
+			var pie = d3.layout.pie()
+								.sort(null)
+								.value(function(d) {
+									return d.value;});
+			var pieData = pie(dataset);
+ 
+			// 创建计算弧形路径的函数
+			var radius = 200;
+			var arc = d3.svg.arc()
+                  .innerRadius(110)
+                  .outerRadius(radius);
+			var outerArc = d3.svg.arc()
+                       .innerRadius(1.2 * radius)
+                       .outerRadius(1.2 * radius);
+			var oArc = d3.svg.arc()
+                   .innerRadius(1.1 * radius)
+                   .outerRadius(1.1 * radius);
+			var slices = main.append('g').attr('class', 'slices');
+			var lines = main.append('g').attr('class', 'lines');
+			var labels = main.append('g').attr('class', 'labels');
+  
+			// 添加弧形元素（g中的path）
+			var arcs = slices.selectAll('g')
+                   .data(pieData)
+                   .enter()
+                   .append('path')
+                   .attr('fill', function(d, i) {
+                      return getColor(i); })
+                   .attr('d', function(d){
+                      return arc(d);  })
+				   .on("mouseover",function(d){
+				     d3.select(this)
+					   .attr('opacity', 0.7);
+					 slices.append("text")
+					       .attr("id","value")
+				           .attr("x",8)
+				           .attr("y",10)
+				           .attr("text-anchor","middle")
+				           .attr("font-size",36)
+				           .text(d.value+"%");
+					   } 
+				    )
+				   .on("mouseout",function(d){
+				     d3.select(this)
+					   .attr('opacity', 1);
+					  d3.select("#value")
+					    .remove();
+					   }); 
+ 
+			// 添加文字标签
+			var texts = labels.selectAll('text')
+                    .data(pieData)
+                    .enter()
+                    .append('text')
+                    .attr('dy', '0.2em')
+                    .attr('fill', function(d, i) {
+                       return getColor(i); })
+                    .text(function(d, i) {
+    				   return d.data.name; })
+                    .style('text-anchor', function(d, i) {
+                       return midAngel(d)<Math.PI ? 'start' : 'end';  })
+                    .attr('transform', function(d, i) {
+                       // 找出外弧形的中心点
+                       var pos = outerArc.centroid(d);
+                      // 改变文字标识的x坐标
+                       pos[0] = radius * (midAngel(d)<Math.PI ? 1.5 : -1.5);
+     
+                       return 'translate(' + pos + ')'; })
+                    .style('opacity', 1);
+
+			var polylines = lines.selectAll('polyline')
+								.data(pieData)
+   								.enter()
+   								.append('polyline')
+   								.attr('points', function(d) {
+   								 return [arc.centroid(d), arc.centroid(d), arc.centroid(d)];
+   								})
+   								.attr('points', function(d) {
+									var pos = outerArc.centroid(d);
+									pos[0] = radius * (midAngel(d)<Math.PI ? 1.5 : -1.5);
+									return [oArc.centroid(d), outerArc.centroid(d), pos];
+   								})
+   								.style('opacity', 0.3);
+ 
+  			function midAngel(d) {
+  				return d.startAngle + (d.endAngle - d.startAngle)/2;
+			}
+  			function getColor(idx) {
+  			var palette = [
+    			'#ee9ca7','#F7816E', '#F9CE8C','#edf98c', '#C3E3E5', '#589BAD', '#CC5959'
+  			]
+  			return palette[idx % palette.length];
+  			}
+			
+ 		</script>
+	<p align="center" style="font-family:verdana;color:black">数据来源：简单心理和果壳共同发起的《2020大众心理健康认知度调研问卷》</p>
+	<hr width="100%"  size="10" color="gray"></hr>
+	<p>结论：<br> 大众对自身的心理健康还比较关注，会通过多种途径来了解心理知识，其中通过网络获取相关知识的比重最大。而且在出现心理问题时，大众还是更倾向于通过互联网寻求帮助，而非专业咨询。</p>
+	</body>
+</html>
