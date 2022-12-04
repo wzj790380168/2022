@@ -18,7 +18,7 @@ http://127.0.0.1:11666/renderearth
 
 ## 效果展示
 
-![image-20221204165249066](C:\Users\平凡之路\AppData\Roaming\Typora\typora-user-images\image-20221204165249066.png)
+
 
 ![image-20221204165302268](C:\Users\平凡之路\AppData\Roaming\Typora\typora-user-images\image-20221204165302268.png)
 
