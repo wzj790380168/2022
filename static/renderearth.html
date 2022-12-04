@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Render the Earth</title>
+    <link rel="stylesheet" href="/static/css/earth.css">
+    <link rel="stylesheet" href="/static/css/d3tip.css">
+    <script src="/static/js/d3.min.js"></script>
+    <script src="/static/js/topojson.js"></script>
+    <script src="/static/js/library/d3-tip.js"></script>
+    <style>
+ 
+ .positioned {
+          position: absolute;
+          top:100px;
+          left:150px;
+          font-size: 10px;
+      }
+      .positioned0 {
+          position: absolute;
+          top:100px;
+          left:200px;
+          font-size: 10px;
+      }
+      .positioned1 {
+          position: absolute;
+          top:1100px;
+          left:150px;
+          font-size: 10px;
+      }
+      .positioned2 {
+          position: absolute;
+          top:1100px;
+          left:200px;
+          font-size: 10px;
+      }
+      .positioned3 {
+          position: absolute;
+          top:1100px;
+          left:250px;
+          font-size: 10px;
+      }
+      .positioned5 {
+          position: absolute;
+          top:1680px;
+          left:830px;
+          font-size: 10px;
+      }
+      .positioned6 {
+          position: absolute;
+          top:1200px;
+          left:1000px;
+          font-size: 10px;
+      }
+      .positioned7 {
+          position: absolute;
+          top:1740px;
+          left:250px;
+          font-size: 10px;
+      }
+        </style>
+  </head>
+  
+  
+  <body>
+    <h1 style="text-align:center">世界各国森林面积（单位：平方千米）</h1>
+    <h2 class="positioned7">2005年-2015年中国、巴西以及世界森林面积占各自领土面积比例变化图（单位：百分比）</h2>
+    <p class="positioned5">(年份)</p>
+    <svg width="1600" height="1800" id="mainsvg" class="svgs"></svg>
+    <button class="positioned1" onclick="editinput()">China</button>
+    <button class="positioned2" onclick="editinput1()">Brazil</button>
+    <button class="positioned3" onclick="editinput2()">World</button>
+    <p class="positioned6" style='font-size:18px' id="test">中国森林占总土地面积的占比变化以及背后的原因:中国森林覆盖率从05年的20.03%到15年的22.31%，上升了2.28个百分点，中国森林面积占总土地面积的占比逐年升高。从森林覆盖率角度来看增长不大，但是考虑到中国国土面积，其十年的森林面积增长是比较显著的。其实近年来 我国森林面稳中有增，一是退耕还林工作开展，二是各项防护林工程的开展。相比古代，我国森林面积减少，主要就是人口增多，滥砍滥伐造成的。中国的森林覆盖情况逐年变好，对于一个人口大国来说，着实不易，这是诸多森林工作人员十数年的辛勤劳作的成果，也是国家重视环保，绿水青山就是金山银山。
+      </p>
+    <script>
+      function editinput() {
+        update(data1);
+        document.getElementById("test").innerHTML="<span style='font-size:18px; color:black;'>中国森林占总土地面积的占比变化以及背后的原因:中国森林覆盖率从05年的20.03%到15年的22.31%，上升了2.28个百分点，中国森林面积占总土地面积的占比逐年升高。从森林覆盖率角度来看增长不大，但是考虑到中国国土面积，其十年的森林面积增长是比较显著的。其实近年来 我国森林面稳中有增，一是退耕还林工作开展，二是各项防护林工程的开展。相比古代，我国森林面积减少，主要就是人口增多，滥砍滥伐造成的。中国的森林覆盖情况逐年变好，对于一个人口大国来说，着实不易，这是诸多森林工作人员十数年的辛勤劳作的成果，也是国家重视环保，绿水青山就是金山银山。</span>"
+      }
+      function editinput1() {
+        update(data2);
+        document.getElementById("test").innerHTML="<span style='font-size:18px; color:black;'>巴西森林占总土地面积的占比变化以及背后的原因:截止到2015年巴西森林覆盖率（占总土地面积百分比）为30.74%，相比2005年，十年间下降了0.23个百分点。巴西森林面积减小，主要是人口增长以及国情，政策原因导致的。在巴西经济持续低迷、执法力度有限的背景下，非法焚烧开荒、盗砍树木等破坏雨林的行为可能会进一步增加。目前包括巴西森林在内的整个亚马逊热带雨林面临的主要问题就是森林砍伐特别严重，这也是亚马逊雨林近年来消失的最主要原因。而砍伐森林的目的一方面是用于出口，利用贵重木材赚取外汇；另一方面就是用来种植农作物，比如大豆。根据巴西媒体的报道，多数森林退化发生在巴西主要的农业州，通过毁林开荒获得的土地70%以上最终成为农村和牧场。所以，这加剧了人类对雨林未来的担忧。</span>"
+      }
+      function editinput2() {
+        update(data3);
+        document.getElementById("test").innerHTML="<span style='font-size:18px; color:black;'>世界森林变化趋势：由图中数据可以看出，从2005-2015年，11年时间，世界森林覆盖率从百分之31.0降低到了百分之30.7，总体呈下降趋势。根据联合国粮农组织的数据，截止2020年，全球森林的面积约为41亿公顷。联合国粮农组织称，这标志着“全球森林面积净减少了近0.5亿公顷”。森林面积在以人们意想不到的速度下降，究其原因，还是人们对森林无节制的破坏，以及自然灾害（山火）频发。首先就是对森林无节制的破坏，根据巴西国家空间研究所（INPE）发布的最新统计数据显示，自从2019年以来，巴西亚马逊的森林砍伐增加了四分之一，而在2020年上半年是更加的“变本加厉”，热带雨林正在遭受毁灭性的影响。其次就是因为森林覆盖率的减少等原因带来的自然灾害山火。美国加州的山火、巴西地区的亚马逊热带雨林大火、广为人们熟知的澳洲大火。2020年1月份的这场澳洲大火造成了共33人死亡，是近10年来最严重的一场火灾，而且和上一场特大火灾仅相隔11年。要知道，2009年那场火灾之前，最严重的一场是在1983年，中间间隔了26年。但是近年来，有越来越多的国家意识到生态环境的重要性，纷纷修改政策，加大植树造林力度。例如，中国先后出台40多项文件，持续加大生态空间保护力度。在2009-2019年期间，中国共完成造林面积7130.7万公顷，成为同期全球森林资源增长最多的国家。在全球2000年到2017年新增绿化面积中，约1/4来自中国，贡献比例居全球首位。由于许多国家的重视，近年来，全球森林面积占土地总面积的比例虽然在持续减少，但是减少已呈现放缓趋势。</span>"
+      }
+    </script>
+    <script>
+      
+    let svg = d3.select('svg');
+    const width = +svg.attr('width');
+    const height = +svg.attr('height');
+    const margin = {top: 60, right: 60, bottom: 10, left: 60};
+    const g1 = svg.append('g').attr('id', 'maingroup')
+    .attr('transform', `translate(-50, 100)`);
+    const svg1= svg.append('g')
+    .attr("transform", `translate(50,10)`);
+    // convert dataPath to svgPath; 
+    // go to https://github.com/d3/d3-geo for more different projections; 
+    //const projection = d3.geoMercator();
+    //const projection = d3.geoOrthographic();
+    //const projection = d3.geoStereographic();
+    //const projection = d3.geoEquirectangular();
+    const projection = d3.geoNaturalEarth1();
+    //const projection = d3.geoTransverseMercator();
+    const pathGenerator = d3.geoPath().projection(projection);
+
+    // setting up the tip tool; 
+    const tip = d3.tip()
+    .attr('class', 'd3-tip').html(function(d) { return d.properties.name });//properties.name获取国家名
+    svg.call(tip);
+    const tip1 = d3.tip()
+    .attr('class', 'd3-tip').html(function(d) { return d.properties.data });
+    svg.call(tip1);
+
+    let worldmeta;
+    let lastid = undefined;
+ 
+//     //颜色梯度
+//  svg.append("rect")
+//          //x,y 矩形的左上角坐标
+//          .attr("x", 111)
+//          .attr("y", 222) // 83为矩形的高
+//          //矩形的宽高
+//          .attr("width", 16)
+//          .attr("height", 83)
+//          //引用上面的id 设置颜色
+//          .style("fill", "url(#" + linearGradient.attr("id") + ")");
+    var data11 = d3.map();
+    var colorScale = d3.scaleThreshold()
+      .domain([0,10000, 100000, 500000, 1000000, 5000000])
+      .range(d3.schemeBlues[7]);
+    
+    d3.json('./static/data/countries-110m.json').then(
+        function(data){
+            // convert topo-json to geo-json; 
+            worldmeta = topojson.feature(data, data.objects.countries);
+
+            // this code is really important if you want to fit your geoPaths (map) in your SVG element; 
+            projection.fitSize([1600, 680], worldmeta);
+
+            // perform data-join; 
+            const paths = g1.selectAll('path')
+            .data(worldmeta.features, d => d.properties.name)
+            .enter().append('path')
+            .attr('d', pathGenerator)
+            .attr('stroke', 'black')
+            // .attr("fill", 'white')
+            .attr("fill", function (d) {
+            return colorScale(d.properties.data);
+            })
+            .attr("stroke-opacity", 0.1)
+            .attr('stroke-width', 1)
+            .on('mouseover',function(d){//悬停//不能用箭头函数
+              d3.select(this)
+              .attr("opacity", 0.5)
+              .attr("stroke","white")
+              .attr("stroke-width", 6);
+              tip.show(d);
+            })
+            .on('mouseout', function(d){//光标离开//不能用箭头函数
+              d3.select(this)
+              .attr("opacity", 1)
+              .attr("stroke","black")
+              .attr("stroke-width",1);
+              
+            })
+            .on('click', function(d){
+              //tip.show(d);
+              tip1.show(d);
+            })
+        }
+    );
+
+    const data1 = [
+       {ser1: 2005, ser2: 20.03304816},
+       {ser1: 2006, ser2: 20.28355789},
+       {ser1: 2007, ser2: 20.53406803},
+       {ser1: 2008, ser2: 20.78457818},
+       {ser1: 2009, ser2: 21.03508722},
+       {ser1: 2010, ser2: 21.2855969},
+       {ser1: 2011, ser2: 21.49109623},
+       {ser1: 2012, ser2: 21.69659602},
+       {ser1: 2013, ser2: 21.90209487},
+       {ser1: 2014, ser2: 22.10759465},
+       {ser1: 2015, ser2: 22.31309418}
+    ];
+    
+    const data3 = [
+    {ser1: 2005, ser2: 30.99623804},
+       {ser1: 2006, ser2: 30.97123082},
+       {ser1: 2007, ser2: 30.94502979},
+       {ser1: 2008, ser2: 30.92260522},
+       {ser1: 2009, ser2: 30.89674808},
+       {ser1: 2010, ser2: 30.86996409},
+       {ser1: 2011, ser2: 30.84438914},
+       {ser1: 2012, ser2: 30.81984683},
+       {ser1: 2013, ser2: 30.79467396},
+       {ser1: 2014, ser2: 30.76956804},
+       {ser1: 2015, ser2: 30.74426441}
+    ];
+    const data2 = [
+    {ser1: 2005, ser2: 63.57092009},
+       {ser1: 2006, ser2: 63.09823238},
+       {ser1: 2007, ser2: 62.62554468},
+       {ser1: 2008, ser2: 62.15285698},
+       {ser1: 2009, ser2: 61.68016927},
+       {ser1: 2010, ser2: 61.20748157},
+       {ser1: 2011, ser2: 61.02332816},
+       {ser1: 2012, ser2: 60.83917474},
+       {ser1: 2013, ser2: 60.65502133},
+       {ser1: 2014, ser2: 60.47086792},
+       {ser1: 2015, ser2: 60.28671451
+}
+    ];
+    const x = d3.scaleLinear().range([150,800]);
+    const xAxis = d3.axisBottom().scale(x);
+    svg.append("g")
+      .attr("transform", `translate(0, 1600)`)
+      .attr("class","myXaxis")
+    
+    // Initialize an Y axis
+    const y = d3.scaleLinear().range([1600, 1050]);
+    const yAxis = d3.axisLeft().scale(y);
+    svg.append("g")
+    .attr("transform", `translate(150, 0)`)
+      .attr("class","myYaxis")
+    
+    // Create a function that takes a dataset as input and update the plot:
+    function update(data) {
+    
+      // Create the X axis:
+      x.domain([2005, d3.max(data, function(d) { return d.ser1 }) ]);
+      svg.selectAll(".myXaxis").transition()
+        .duration(3000)
+        .call(xAxis);
+    
+      // create the Y axis
+      y.domain([d3.min(data, function(d) { return d.ser2  })-5, d3.max(data, function(d) { return d.ser2  })+1 ]);
+      svg.selectAll(".myYaxis")
+        .transition()
+        .duration(3000)
+        .call(yAxis);
+    
+      // Create a update selection: bind to the new data
+      const u = svg.selectAll(".lineTest")
+        .data([data], function(d){ return d.ser1 });
+    
+      // Updata the line
+      u
+        .join("path")
+        .attr("class","lineTest")
+        .transition()
+        .duration(3000)
+        .attr("d", d3.line()
+          .x(function(d) { return x(d.ser1); })
+          .y(function(d) { return y(d.ser2); }))
+          .attr("fill", "none")
+          .attr("stroke", "steelblue")
+          .attr("stroke-width", 2.5)
+    }
+    
+    // At the beginning, I run the update function on the first dataset:
+    update(data1)
+  </script>
+  </body>
+</html>
